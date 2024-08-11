@@ -8,9 +8,9 @@ from dotenv import load_dotenv
 import os
 import time
 
-load_dotenv()
+# load_dotenv()
 
-session_cookie = os.getenv("SESSION_COOKIE")
+# session_cookie = os.getenv("SESSION_COOKIE")
 
 def scrape_linkedin_profile(profile_url, session_cookie):
     """
@@ -585,10 +585,10 @@ def save_to_json(profile_data, file_name="linkedin_profile.json"):
     return profile_data
 
 # Example usage (replace with your session cookie and profile URL)
-session_cookie = session_cookie
-profile_name = "sreejit-nair-5274635"
-profile_url = f"https://www.linkedin.com/in/{profile_name}/"
-profile_data = scrape_linkedin_profile(profile_url, session_cookie)
+# session_cookie = session_cookie
+# profile_name = "sreejit-nair-5274635"
+# profile_url = f"https://www.linkedin.com/in/{profile_name}/"
+# profile_data = scrape_linkedin_profile(profile_url, session_cookie)
 
-print(profile_data)
-save_to_json(profile_data, f"linkedin_profile_{profile_name}.json")
+# print(profile_data)
+# save_to_json(profile_data, f"linkedin_profile_{profile_name}.json")
