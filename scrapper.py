@@ -122,7 +122,7 @@ def scrape_linkedin_profile(profile_url, session_cookie):
         print(f"Error extracting about: {e}")
 
     # Extract about
-        profile_data["Summary"] = ""
+    profile_data["Summary"] = ""
     try:
         # Locate the div with ID "about"
         about_section = WebDriverWait(driver, 10).until(
@@ -584,9 +584,9 @@ def save_to_json(profile_data, file_name="linkedin_profile.json"):
 
     return profile_data
 
-# Example usage (replace with your session cookie and profile URL)
+# #Example usage (replace with your session cookie and profile URL)
 # session_cookie = session_cookie
-# profile_name = "sreejit-nair-5274635"
+# profile_name = "rushabh-khandhar-5370b1255"
 # profile_url = f"https://www.linkedin.com/in/{profile_name}/"
 # profile_data = scrape_linkedin_profile(profile_url, session_cookie)
 

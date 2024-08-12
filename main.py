@@ -33,10 +33,12 @@ def scrape_and_grade():
 
     # Return the results as a JSON response
     return jsonify({
+        'profile_data': profile_data,
         'warm': warm,
         'deep': deep,
         'wide': wide
     })
+
 
 if __name__ == '__main__':
     app.run(port=5000)
