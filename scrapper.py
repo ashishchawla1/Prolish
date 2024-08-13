@@ -23,18 +23,22 @@ def scrape_linkedin_profile(profile_url, session_cookie):
     Returns:
         dict: Scraped profile data (name, description, location, experiences, education, skills, profile picture URL).
     """
-
+    # chrome_options = webdriver.ChromeOptions()
+    # chrome_options.add_argument("--headless")
+    # driver = webdriver.Chrome(chrome_options=chrome_options)
     options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    #options.add_argument("--incognito") 
     # Adjust the path to your ChromeDriver binary if needed
     driver = webdriver.Chrome(options=options)
     driver.get("https://www.linkedin.com/login")
-
+    driver.implicitly_wait(5)
     # Set session cookie
     try:
         driver.add_cookie({"name": "li_at", "value": session_cookie})
     except Exception as e:
         print(f"Error setting session cookie: {e}")
-
+    driver.refresh()
     driver.get(profile_url)
 
     profile_data = {}
@@ -586,7 +590,7 @@ def save_to_json(profile_data, file_name="linkedin_profile.json"):
 
 # #Example usage (replace with your session cookie and profile URL)
 # session_cookie = session_cookie
-# profile_name = "rushabh-khandhar-5370b1255"
+# profile_name = "sreejit-nair-5274635"
 # profile_url = f"https://www.linkedin.com/in/{profile_name}/"
 # profile_data = scrape_linkedin_profile(profile_url, session_cookie)
 

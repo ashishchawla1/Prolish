@@ -55,9 +55,9 @@ def scrape_and_grade():
         'warm': warm,
         'deep': deep,
         'wide': wide,
-        "warm_score": warm.split("/n")[-1][-4:-1].strip(),
-        "deep_score": deep.split("/n")[-1][-4:-1].strip(),
-        "wide_score": wide.split("/n")[-1][-4:-1].strip()
+        "warm_score": warm.split("/n")[-1][-4:].strip(),
+        "deep_score": deep.split("/n")[-1][-4:].strip(),
+        "wide_score": wide.split("/n")[-1][-4:].strip()
     })
 
 if __name__ == '__main__':
