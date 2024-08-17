@@ -588,11 +588,11 @@ def save_to_json(profile_data, file_name="linkedin_profile.json"):
 
     return profile_data
 
-# #Example usage (replace with your session cookie and profile URL)
-# session_cookie = session_cookie
-# profile_name = "sreejit-nair-5274635"
-# profile_url = f"https://www.linkedin.com/in/{profile_name}/"
-# profile_data = scrape_linkedin_profile(profile_url, session_cookie)
+#Example usage (replace with your session cookie and profile URL)
+session_cookie = "AQEDAUMGA0sDlB9vAAABkVsVVtoAAAGRfyHa2k0AuxQ4uXFzHO7R59FgK-27esDvGNCqy0v6yzzHdq6WCvcnpEE87F3PrYj2uX_eBCEMKjeHlGnuw2glXHZwGJiY7CZ77swL5GAHpQsVNy2SCrdvQLOi"
+profile_name = "sreejit-nair-5274635"
+profile_url = f"https://www.linkedin.com/in/{profile_name}/"
+profile_data = scrape_linkedin_profile(profile_url, session_cookie)
 
-# print(profile_data)
-# save_to_json(profile_data, f"linkedin_profile_{profile_name}.json")
+print(profile_data)
+save_to_json(profile_data, f"linkedin_profile_{profile_name}.json")

@@ -193,14 +193,35 @@ def scrape_linkedin_profile(profile_url, session_cookie):
             print(f"Error finding education: {e}")
 
         # Extract skills
-        profile_data["skills"] = []
-        page.goto(f"{profile_url}details/skills/")
-        page.wait_for_selector('//main//section//div[2]//div[2]//div//div//ul//li', timeout=90000)
-        skills_elements = page.query_selector_all('//main//section//div[2]//div[2]//div//div//ul//li')
-        for element in skills_elements:
-            skill = safe_extract('.//span[contains(@class, "visually-hidden")]', parent=element)
-            if skill:
-                profile_data["skills"].append(skill)
+        skills_url = f"{profile_url}details/skills/"
+        page.goto(skills_url)
+
+        profile_data ["skills"] = []
+
+       
+        try:
+            # Wait for the skills section to be loaded
+            page.wait_for_selector('ul.pvs-list', timeout=10000)
+
+            # Print page content for debugging
+            print(page.content())
+
+            # Get all skills list items
+            skills_elements = page.query_selector_all('ul.pvs-list li')
+
+            for element in skills_elements:
+                try:
+                    # Extract skill name
+                    skill_element = element.query_selector('.mr1.hoverable-link-text.t-bold span')
+                    if skill_element:
+                        profile_data["skills"].append(skill_element.inner_text().strip())
+                    else:
+                        print("Skill element not found")
+                except Exception as e:
+                    print(f"Error extracting skill: {e}")
+
+        except Exception as e:
+            print(f"Error finding skills section: {e}")
 
         # Extract recommendations
         profile_data["recommendations_received"] = []
@@ -244,10 +265,10 @@ def save_to_json(profile_data, file_name="linkedin_profile.json"):
     with open(file_name, 'w', encoding='utf-8') as f:
         json.dump(profile_data, f, ensure_ascii=False, indent=4)
     return profile_data
-# Example usage
-session_cookie = "AQEDAUaI1woFjFEHAAABkVtAn18AAAGRf00jX00ALvPq5opddvhs4Tr5xlT9mu1Ag-j6hHgf3eAwpIi4fIdOu-tBW2fhHAAaS6I1kHuy_VM2pciRSfGnnRiAp4xZSHOjp9ePq7cEr1NdZBRdBpyxBnNv"
-profile_name = "parrsam"
-profile_url = f"https://www.linkedin.com/in/{profile_name}/"
-profile_data = scrape_linkedin_profile(profile_url, session_cookie)
-print(profile_data)
-save_to_json(profile_data, f"linkedin_profile_{profile_name}.json")
+# # Example usage
+# session_cookie = "AQEDAUaI1woFjFEHAAABkVtAn18AAAGRf00jX00ALvPq5opddvhs4Tr5xlT9mu1Ag-j6hHgf3eAwpIi4fIdOu-tBW2fhHAAaS6I1kHuy_VM2pciRSfGnnRiAp4xZSHOjp9ePq7cEr1NdZBRdBpyxBnNv"
+# profile_name = "parrsam"
+# profile_url = f"https://www.linkedin.com/in/{profile_name}/"
+# profile_data = scrape_linkedin_profile(profile_url, session_cookie)
+# print(profile_data)
+# save_to_json(profile_data, f"linkedin_profile_{profile_name}.json")

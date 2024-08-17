@@ -1,5 +1,5 @@
 import linkedin_graper
-import scrapper
+import scrapper2
 import re
 from flask import Flask, request, jsonify
 import pandas as pd
@@ -22,7 +22,7 @@ def scrape_and_grade():
     profile_url = f"https://www.linkedin.com/in/{profile_name}/"
 
     # Scrape the LinkedIn profile
-    profile_data = scrapper.scrape_linkedin_profile(profile_url, session_cookie)
+    profile_data = scrapper2.scrape_linkedin_profile(profile_url, session_cookie)
 
     # Load the grading parameters from an Excel file
     grading_parameters = pd.read_excel('grading_parameters.xlsx')
