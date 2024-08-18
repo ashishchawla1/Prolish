@@ -5,7 +5,7 @@ import random
 
 def scrape_linkedin_profile(profile_url, session_cookie):
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)  # Set headless=False for debugging
+        browser = p.chromium.launch(headless=True)  # Set headless=False for debugging
         context = browser.new_context()
 
         # Add LinkedIn session cookie
@@ -207,7 +207,7 @@ def scrape_linkedin_profile(profile_url, session_cookie):
             print(page.content())
 
             # Get all skills list items
-            skills_elements = page.query_selector_all('ul.pvs-list li')
+            skills_elements = page.query_selector_all('/html/body/div[4]/div[3]/div/div/div[2]/div/div/main/section/div[2]/div[2]/div/div/div[1]/ul')
 
             for element in skills_elements:
                 try:

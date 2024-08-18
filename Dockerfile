@@ -3,6 +3,7 @@ FROM python:3.11-slim
 
 # Install necessary dependencies for Playwright
 RUN apt-get update && apt-get install -y \
+
     libnss3 \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
@@ -40,19 +41,27 @@ COPY .env .env
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install Uvicorn
+RUN pip install uvicorn
+
 # Install Playwright and the necessary browser binaries
-RUN pip install playwright
-RUN playwright install --with-deps
+ARG CACHEBUST=1
+RUN echo "CACHEBUST=$CACHEBUST" && pip install playwright && playwright install
 
 # Copy the contents of the current directory (apollo) into /app
 COPY . /app
 
 # Make port 8000 available to the world outside this container
-EXPOSE 8000
+EXPOSE 8080
 
 # Define environment variables
 ENV HOST=0.0.0.0
-ENV PORT=8000
+ENV PORT=8080
 
-# Run the FastAPI app using Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Define environment variables
+ENV FLASK_APP=main.py
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=8080
+
+# Run the application
+CMD ["flask", "run"]
