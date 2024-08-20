@@ -1,23 +1,32 @@
 import linkedin_graper
 import scrapper2
 import re
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import pandas as pd
 import os
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+logger.info("Application starting...")
 # session_cookie = os.getenv("SESSION_COOKIE")
 api_key = os.getenv("OPENAI_API_KEY")
 
-app = Flask(__name__)
+app = FastAPI()
 
-@app.route('/scrape_and_grade', methods=['POST'])
-def scrape_and_grade():
-    data = request.json
-    session_cookie = data.get('session_cookie')
-    profile_name = data.get('profile_name')
+class ScrapeAndGradeRequest(BaseModel):
+    session_cookie: str
+    profile_name: str
+
+@app.post('/scrape_and_grade')
+def scrape_and_grade(request: ScrapeAndGradeRequest):
+    session_cookie = request.session_cookie
+    profile_name = request.profile_name
     
     if not session_cookie or not profile_name:
-        return jsonify({'error': 'session_cookie and profile_name are required'}), 400
+        raise HTTPException(status_code=400, detail='session_cookie and profile_name are required')
 
     # Build the LinkedIn profile URL
     profile_url = f"https://www.linkedin.com/in/{profile_name}/"
@@ -51,7 +60,7 @@ def scrape_and_grade():
     #     wide_score=None
 
     # Return the results as a JSON response
-    return jsonify({
+    return {
         'profile_data': profile_data,
         # 'warm': warm,
         # 'deep': deep,
@@ -59,7 +68,8 @@ def scrape_and_grade():
         # "warm_score": warm.split("/n")[-1][-4:].strip(),
         # "deep_score": deep.split("/n")[-1][-4:].strip(),
         # "wide_score": wide.split("/n")[-1][-4:].strip()
-    })
+    }
 
 if __name__ == '__main__':
-    app.run( host="0.0.0.0", port=int(os.getenv("PORT", 8080)))
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8080)))
