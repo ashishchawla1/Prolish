@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 logger.info("Application starting...")
 # session_cookie = os.getenv("SESSION_COOKIE")
-api_key = os.getenv("OPENAI_API_KEY")
+# api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
 
