@@ -51,11 +51,11 @@ RUN playwright install
 COPY . /app
 
 # Make port 8000 available to the world outside this container
-EXPOSE 8080
+EXPOSE 7000
 
 # Define environment variables
 ENV HOST=0.0.0.0
-ENV PORT=8080
+ENV PORT=7000
 
 # Run the FastAPI app using Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -223,19 +223,61 @@ def scrape_linkedin_profile(profile_url, session_cookie):
         except Exception as e:
             print(f"Error finding skills section: {e}")
 
-        # Extract recommendations
-        profile_data["recommendations_received"] = []
-        page.goto(f"{profile_url}details/recommendations/?detailScreenTabIndex=0")
-        page.wait_for_selector('//main//section//div[2]//div[2]//div//div//ul//li', timeout=90000)
-        recommendations_elements = page.query_selector_all('//main//section//div[2]//div[2]//div//div//ul//li')
-        for element in recommendations_elements:
-            recommendation = {
-                "name": safe_extract('.//span[contains(@class, "mr1")]', parent=element),
-                "date_and_relationship": safe_extract('.//span[contains(@class, "pvs-entity__caption-wrapper")]', parent=element),
-                "content": safe_extract('.//span[@aria-hidden="true"]', parent=element)
-            }
-            profile_data["recommendations_received"].append(recommendation)
+        def extract_recommendations(url, tab_index):
+            page.goto(url)
 
+            try:
+                # Wait for the ul element in the recommendations section
+                page.wait_for_selector('/html/body/div[5]/div[3]/div/div/div[2]/div/div/main/section/div[2]/div[2]/div/div/div[1]/ul', timeout=15000)
+
+                recommendations_elements = page.query_selector_all('/html/body/div[5]/div[3]/div/div/div[2]/div/div/main/section/div[2]/div[2]/div/div/div[1]/ul/li')
+
+                recommendations = []
+                for element in recommendations_elements:
+                    recommendation = {}
+                    try:
+                        name_element = element.query_selector(".mr1.hoverable-link-text.t-bold span[aria-hidden='true']")
+                        if name_element:
+                            recommendation["name"] = name_element.inner_text().strip()
+                    except Exception as e:
+                        print(f"Error extracting name for recommendation: {e}")
+                        continue
+
+                    try:
+                        date_and_relationship_element = element.query_selector(".pvs-entity__caption-wrapper[aria-hidden='true']")
+                        if date_and_relationship_element:
+                            recommendation["date_and_relationship"] = date_and_relationship_element.inner_text().strip()
+                    except Exception as e:
+                        print(f"Error extracting date and relationship for recommendation: {e}")
+
+                    try:
+                        content_element = element.query_selector(".display-flex.align-items-center.t-14.t-normal.t-black span[aria-hidden='true']")
+                        if content_element:
+                            recommendation["content"] = content_element.inner_text().strip()
+                    except Exception as e:
+                        print(f"Error extracting content for recommendation: {e}")
+
+                    recommendations.append(recommendation)
+
+                return recommendations
+
+            except Exception as e:
+                print(f"Error finding recommendations: {e}")
+                return []
+
+        # Extract recommendations received
+        recommendations_received_url = f"{profile_url}details/recommendations/?detailScreenTabIndex=0"
+        profile_data["recommendations_received"] = extract_recommendations(
+            recommendations_received_url,
+            tab_index=0
+        )
+
+        # Extract recommendations given
+        recommendations_given_url = f"{profile_url}details/recommendations/?detailScreenTabIndex=1"
+        profile_data["recommendations_given"] = extract_recommendations(
+            recommendations_given_url,
+            tab_index=1
+        )
         # Extract posts
         profile_data["posts"] = []
         page.goto(f"{profile_url}recent-activity/all/")
@@ -265,10 +307,10 @@ def save_to_json(profile_data, file_name="linkedin_profile.json"):
     with open(file_name, 'w', encoding='utf-8') as f:
         json.dump(profile_data, f, ensure_ascii=False, indent=4)
     return profile_data
-# # Example usage
-# session_cookie = "AQEDAUaI1woFjFEHAAABkVtAn18AAAGRf00jX00ALvPq5opddvhs4Tr5xlT9mu1Ag-j6hHgf3eAwpIi4fIdOu-tBW2fhHAAaS6I1kHuy_VM2pciRSfGnnRiAp4xZSHOjp9ePq7cEr1NdZBRdBpyxBnNv"
-# profile_name = "parrsam"
-# profile_url = f"https://www.linkedin.com/in/{profile_name}/"
-# profile_data = scrape_linkedin_profile(profile_url, session_cookie)
-# print(profile_data)
-# save_to_json(profile_data, f"linkedin_profile_{profile_name}.json")
+# Example usage
+session_cookie = "AQEDAUMGA0sBsZPBAAABkXsD9BQAAAGRnxB4FE0AZhosrMqJPU9HV_DuinLTFJ-PPzXbHnamxhL1tivDIBX1vyFLRpEhSP_jInZ3rl3RYZRrZ-MObaXN7m-pYR0QbpEkNYfyT3Bg4snSN6WqK7xBCstG"
+profile_name = "ashish-chawla-1729digital"
+profile_url = f"https://www.linkedin.com/in/{profile_name}/"
+profile_data = scrape_linkedin_profile(profile_url, session_cookie)
+print(profile_data)
+save_to_json(profile_data, f"linkedin_profile_{profile_name}.json")
